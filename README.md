@@ -58,7 +58,7 @@ This is how easily it can be done. We use `useForm` to register rules and use-<b
 `formState` to get the form field statuses,<br/>
 `formUpdate` to update the form field statuses,<br/>
 `formSubmit` to handle the submition of form field, and lastly <br/>
-`formRegistry` to register the form field in child component. we will use it in Advance Usage<br/>
+`formRegistry` to register the form field in child component. we will use it in Advance Usage<br/><br/>
 [![Edit formydable-basic](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/formydable-basic-2q69m?fontsize=14&hidenavigation=1&theme=dark)
 
 ```js
@@ -112,7 +112,7 @@ export const FormFields = () => {
 ## Advance Usage
 We use `FormStateProvider` to provide `formState`, `formUpdate` and `formRegistry` to children components.<br/>
 We import component `OtherFields` as a example on how to use `FormStateProvider` and `useFormState` together</br>
-`OtherFields` can be seen after this section.</br>
+`OtherFields` can be seen after this section.</br><br/>
 [![Edit formydable-advance](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mystifying-bash-0f6z2?fontsize=14&hidenavigation=1&theme=dark)
 
 ```js
@@ -218,7 +218,7 @@ export const OtherFields = () => {
 <br/><br/>
 
 ## Alias Registry Usage
-It is inevitable that some form fields are multiple with the same name on it, the problem is we wanted to add those new or other fields into form state registry. for that reason formydable use alias registry and make a counter measure about those stuffs.<br/>
+It is inevitable that some form fields are multiple with the same name on it, the problem is we wanted to add those new or other fields into form state registry. for that reason formydable use alias registry and make a counter measure about those stuffs.<br/><br/>
 [![Edit formydable-alias-usage](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/relaxed-antonelli-g2jre?fontsize=14&hidenavigation=1&theme=dark)
 
 ```js
@@ -337,7 +337,7 @@ The extension rules can only be use by extending and importing [`mytabworks-util
 
 ## Handle extend rules and extend customize rules
 As metion in previous section `Validator` rules is extensible which is customize rules are applicable.<br/>
-For further idea on customizing rules you can visit [here](https://github.com/mytabworks/mytabworks-utils#validator-customize-rule-usage)<br/>
+For further idea on customizing rules you can visit [here](https://github.com/mytabworks/mytabworks-utils#validator-customize-rule-usage)<br/><br/>
 [![Edit formydable-extend-rules](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/crazy-cloud-ogcs8?fontsize=14&hidenavigation=1&theme=dark)
 ```js
 import React from "react"

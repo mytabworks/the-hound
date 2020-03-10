@@ -17,6 +17,7 @@ This is a react form validator that is delightfully made by mytabowrks which is 
     - [Validator Main Rules](#validator-main-rules)
     - [Validator Extension Rules](#validator-extension-rules) 
     - [Handle extend rules and extend customize rules](#handle-extend-rules-and-extend-customize-rules)
+- [Handle Change Event When User Is Done Typing](#handle-change-event-when-user-is-done-typing)
 - [Types](#types)
     - [useForm types](#useform-types)
         - [formState types](#formstate-types)
@@ -341,97 +342,144 @@ For further idea on customizing rules you can visit [here](https://github.com/my
 [![Edit formydable-extend-rules](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/crazy-cloud-ogcs8?fontsize=14&hidenavigation=1&theme=dark)
 ```js
 import React from "react"
-import { useForm } from "formydable"
-import { Validator } from "mytabworks-utils"
-import { same, max_size } from "mytabworks-utils/extend/rules"
+import { useForm } from "formydable";
+import { Validator, DoneTypingEvent } from "mytabworks-utils";
+import { same, max_size } from "mytabworks-utils/extend/rules";
 
 const strong_password = {
-    regexp: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$/g,
-    exe(received, first_param, second_param ) {
-        /*
+  exe(received, first_param, second_param) {
+    /*
         recieved - it is the received value of the field
         first_param - rules:<first_param> it is use when custom rules have first parameter like min, max, mimes, etc.
         second_param - rules:<first_param>=<second_param> it is use when custom rules have first and second parameter like required_if.
         */
+    /*first_param and second_param are not needed for this validation*/
+    const test = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$/g.test(received);
 
-        /*first_param and second_param are not needed for this validation*/
-        /*note! must return true when it is INVALID*/
-        return !this.regexp.test(received)
-    },
-    message: "The :attribute must have 1 small letter, 1 capital letter, 1 number, and 1 special character"
-    /*note! in messages
+    /*note! must return true when it is INVALID*/
+    return !test;
+  },
+  message:
+    "The :attribute must have 1 small letter, 1 capital letter, 1 number, and 1 special character"
+  /*note! in messages
         the :attribute is replace by the label inputed.
         the name of the rule like :strong_password can be use to replace by first_param inputed
         the :third_party is replace by the second_param 
     */
-}
+};
 
-Validator.rulesExtend({ same, max_size, strong_password })
+Validator.rulesExtend({ same, max_size, strong_password });
 
 export const FormFields = () => {
-    const defaultRegistry = {
-        fname: { label: 'First Name', rules: 'required|alpha|min:3' },
-        lname: { label: 'Last Name', rules: 'required|alpha|min:3|max:20' },
-        pass: { label: 'Password', rules: 'required|min:8|strong_password' },
-        confirm_pass: { label: 'Confirm Password', rules: 'same:pass@Password' },
-        resume: { label: 'Resume', rules: 'required|max_size:5000|mimes:pdf,jpg,png' }
-    
-    const { formState, formUpdate, formSubmit } = useForm(defaultRegistry);
+  const defaultRegistry = {
+    fname: { label: "First Name", rules: "required|alpha|min:3" },
+    lname: { label: "Last Name", rules: "required|alpha|min:3|max:20" },
+    pass: { label: "Password", rules: "required|min:8|strong_password" },
+    confirm_pass: { label: "Confirm Password", rules: "same:pass@Password" },
+    resume: {
+      label: "Resume",
+      rules: "required|max_size:5000|mimes:pdf,jpg,png"
+    }
+  };
 
-    const { fname, lname, pass, confirm_pass, resume } = formState();
+  const { formState, formUpdate, formSubmit } = useForm(defaultRegistry);
 
-    const handleFieldChange = (event) => {
-        formUpdate({ target: event.target });
-    };
+  const { fname, lname, pass, confirm_pass, resume } = formState();
 
-    const formSubmitHandler = formSubmit((event) => {
-        if (event.isReady()) {
-            console.log(event.json(), event.param(), event.formData())
-        } else {
-            console.log('fail')
-            event.locateFailed()
-        }
-    }); 
-    
-    return ( 
-        <form onSubmit={formSubmitHandler}> 
-            <input 
-                name='fname'
-                placeholder='first name...'
-                onChange={handleFieldChange}
-            />
-            {fname && fname.isInvalid && <p><i>{fname.message}</i></p>} 
-            <input 
-                name='lname'
-                placeholder='last name...'
-                onChange={handleFieldChange}
-            />
-            {lname && lname.isInvalid && <p><i>{lname.message}</i></p>} 
-            <input 
-                type="password"
-                name='pass'
-                placeholder='first name...'
-                onChange={handleFieldChange}
-            />
-            {pass && pass.isInvalid && <p><i>{pass.message}</i></p>} 
-            <input 
-                type="password"
-                name='confirm_pass'
-                placeholder='last name...'
-                onChange={handleFieldChange}
-            />
-            {confirm_pass && confirm_pass.isInvalid && <p><i>{confirm_pass.message}</i></p>} 
-            <input 
-                type='file'
-                name='resume'
-                placeholder='provide resume'
-                onChange={handleFieldChange}
-            />
-            {resume && resume.isInvalid && <p><i>{resume.message}</i></p>}
-            <button type='submit'>Submit</button>
-        </form> 
-    );
-}
+  const handleFieldChangeWhenDoneTyping = DoneTypingEvent(event => {
+    formUpdate({ target: event.target });
+  }, 500); /*500ms delay before fire to see if user is done typing*/
+
+  const formSubmitHandler = formSubmit(event => {
+    if (event.isReady()) {
+      console.log(event.json(), event.param(), event.formData());
+    } else {
+      console.log("fail");
+      event.locateFailed();
+    }
+  });
+
+  return (
+    <form onSubmit={formSubmitHandler}>
+      <input
+        name="fname"
+        placeholder="first name..."
+        {...handleFieldChangeWhenDoneTyping}
+      />
+      {fname && fname.isInvalid && (
+        <p>
+          <i>{fname.message}</i>
+        </p>
+      )}
+      <input
+        name="lname"
+        placeholder="last name..."
+        {...handleFieldChangeWhenDoneTyping}
+      />
+      {lname && lname.isInvalid && (
+        <p>
+          <i>{lname.message}</i>
+        </p>
+      )}
+      <input
+        type="password"
+        name="pass"
+        placeholder="passwword..."
+        {...handleFieldChangeWhenDoneTyping}
+      />
+      {pass && pass.isInvalid && (
+        <p>
+          <i>{pass.message}</i>
+        </p>
+      )}
+      <input
+        type="password"
+        name="confirm_pass"
+        placeholder="confirm password..."
+        {...handleFieldChangeWhenDoneTyping}
+      />
+      {confirm_pass && confirm_pass.isInvalid && (
+        <p>
+          <i>{confirm_pass.message}</i>
+        </p>
+      )}
+      <input
+        type="file"
+        name="resume"
+        placeholder="provide resume"
+        {...handleFieldChangeWhenDoneTyping}
+      />
+      {resume && resume.isInvalid && (
+        <p>
+          <i>{resume.message}</i>
+        </p>
+      )}
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+```
+<br/><br/>
+
+# Handle Change Event When User Is Done Typing
+There is another utility that `mytabworks-utils` posseses which is [DoneTypingEvent](https://github.com/mytabworks/mytabworks-utils#donetypingevent).<br/>
+It is use to fire the event after user is done typing, that will save a lot of unessesary execution while typing, especially in React when using state.<br/>
+Since we can use `mytabworks-utils`, we must use it to the fullest. <br/><br/>
+[![Edit formydable-extend-rules](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/crazy-cloud-ogcs8?fontsize=14&hidenavigation=1&theme=dark)
+```js
+import { DoneTypingEvent } from "mytabworks-utils"; 
+```
+```js
+const handleFieldChangeWhenDoneTyping = DoneTypingEvent(event => {
+    formUpdate({ target: event.target });
+}, 500); /*500ms delay before firing, to see if user is done typing*/
+```
+```html
+<input
+    name="fname"
+    placeholder="first name..."
+    {...handleFieldChangeWhenDoneTyping}
+/>
 ```
 <br/><br/>
 

@@ -1,6 +1,6 @@
 {
     "name": "formydable",
-    "version": "0.1.0",
+    "version": "1.0.2",
     "main": "lib/index.js",
     "description": "Blazingly Fast React Forms.",
     "repository": {
@@ -20,7 +20,8 @@
         "react-form",
         "validation",
         "validator",
-        "hooks"
+        "hooks",
+        "form-hooks"
     ],
     "author": "mytabworks",
     "license": "MIT",

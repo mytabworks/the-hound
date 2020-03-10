@@ -390,6 +390,10 @@ export const FormFields = () => {
     formUpdate({ target: event.target });
   }, 500); /*500ms delay before fire to see if user is done typing*/
 
+  const handleFileChange = event => {
+    formUpdate({ target: event.target });
+  }
+
   const formSubmitHandler = formSubmit(event => {
     if (event.isReady()) {
       console.log(event.json(), event.param(), event.formData());
@@ -447,7 +451,7 @@ export const FormFields = () => {
         type="file"
         name="resume"
         placeholder="provide resume"
-        {...handleFieldChangeWhenDoneTyping}
+        onChange={handleFileChange}
       />
       {resume && resume.isInvalid && (
         <p>

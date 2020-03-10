@@ -44,10 +44,10 @@ yarn add formydable
 ```js
 import { useForm, FormStateProvider, useFormState } from "formydable"
 ```
-<br/>
+<br/><br/>
 
 ## Important Note
-The rules key name and the form fields name must be exactly the same, unless you use [aliasing registry](#alias-registry-usage).<br/>
+The rules key name and the form fields name must be exactly the same, unless you use [aliasing registry](#alias-registry-usage).<br/><br/>
 
 ## Basic Usage
 This is how easily it can be done. We use `useForm` to register rules and use-<br/>
@@ -102,7 +102,7 @@ export const FormFields = () => {
     );
 }
 ```
-<br/>
+<br/><br/>
 
 ## Advance Usage
 We use `FormStateProvider` to provide `formState`, `formUpdate` and `formRegistry` to children components.<br/>
@@ -163,7 +163,7 @@ export const PersonalFormFields = () => {
     );
 }
 ```
-<br/>
+<br/><br/>
 
 ### Register `OtherFields`
 This is the component we use in Advance Usage as additional fields.<br/>
@@ -209,7 +209,7 @@ export const OtherFields = () => {
     );
 }
 ```
-<br/>
+<br/><br/>
 
 ## Alias Registry Usage
 It is inevitable that some form fields are multiple with the same name on it, the problem is we wanted to add those new or other fields into form state registry. for that reason formydable use alias registry and make a counter measure about those stuffs.<br/>
@@ -290,13 +290,13 @@ export const Favorites = () => {
 	});
 };
 ```
-<br/>
+<br/><br/>
 
 # Rules
 Since `formydable` is using [mytabworks-utils](https://github.com/mytabworks/mytabworks-utils#readme) `Validator` as the core form validator tool. and you can use it too by importing `mytabwork-utils`!<br/>
 `Validator` has two section of rules the [main rules](https://github.com/mytabworks/mytabworks-utils#validator-main-rules) which are the commonly use rules and the [extend rules](https://github.com/mytabworks/mytabworks-utils#validator-extension-rules) which are the extensible and the "not" commonly use rules. The reason why it is seperated, is to reduce the payload of an unuse rules.<br/> 
 You can read further on how to [extend rules](https://github.com/mytabworks/mytabworks-utils#validator-extend-rules-usage) and make [custom rules](https://github.com/mytabworks/mytabworks-utils#validator-customize-rule-usage) in [mytabworks-utils](https://github.com/mytabworks/mytabworks-utils#readme) docs.<br/><br/>
-<br/>
+
 
 ## Validator Main Rules
 The main validation rules which is commonly use.
@@ -309,7 +309,7 @@ The main validation rules which is commonly use.
 | max         | max:<number>              | it will validate the maximum character, number, checkbox is checked, select(multiple) is selected, file(multiple) is selected. `ex. max:20` | The :attribute field may not be greater than :max (character, items, files) |
 | mimes       | mimes:<mime_types>        | it will validate the specific mimes of the files which are allowed. `ex. mimes:jpg,pdf,rar`| The :attribute only allows :mimes|
 | alpha       | alpha                     | it will validate if the field value is only contain letter | The :attribute may only contain letters|
-<br/>
+<br/><br/>
 
 ## Validator Extension Rules
 The extension rules can only be use by extending and importing [`mytabworks-utils/extend/rules`](https://github.com/mytabworks/mytabworks-utils#validator-extend-rules-usage). these validation rules are excluded in the main rules because these are not often use in the form, so to reduce the payload mytabworks decided to remove these from the main list and became an extension when needed.
@@ -323,7 +323,7 @@ The extension rules can only be use by extending and importing [`mytabworks-util
 | min_size    | min_size:<number>           | it will validate if the field contain a minimum file size and the size must calculate in kilobytes. `ex. min_size:1000`| The :attribute must be atleast :min_size kilobytes.|
 | required_if | required_if:<target_field_name>=<target_expected_value> | it will require the field, if the target field matches the expected value. you can use exact value or regular expression like `required_if:bio=.+`. `.+` means has any value. `ex. required_if:country=AU` since most of the time field names are not the same as the labels and same with the values label. that is why you can use Aliasing(@) `ex. required_if:country@Country=AU@Australia`  | The :attribute field is required when :required_if is :third_party. | 
 | same        | same:<target_field_name>               | it will validate the field until the target field contain the same value. `ex. same:pass` since most of the time field names are not the same as the labels you can use Aliasing(@) `ex. same:pass@Password` | The :attribute and :same must match. |
-<br/>
+<br/><br/>
 
 ## Handle extend rules and extend customize rules
 As metion in previous section `Validator` rules is extensible which is customize rules are applicable.<br/>
@@ -422,7 +422,7 @@ export const FormFields = () => {
     );
 }
 ```
-<br/>
+<br/><br/>
 
 # Types
 when you see `:` it means required if you see `?:` it means optional<br/><br/>
@@ -432,7 +432,7 @@ when you see `:` it means required if you see `?:` it means optional<br/><br/>
 ```js
 useForm(registry: { [name: string]: { label: string, rules: string } }): [formState, formUpdate, formSubmit, formRegistry]
 ```
-<br/>
+<br/><br/>
 
 
 ### formState types
@@ -445,7 +445,7 @@ when no parameter, it will get all form states
 ```js
 formState(): { [name: string]: { label: string, rules: string, isInvalid: boolean, message: null|string } } 
 ```
-<br/>
+<br/><br/>
 
 
 ### formUpdate types
@@ -453,14 +453,14 @@ formState(): { [name: string]: { label: string, rules: string, isInvalid: boolea
 ```js
 formUpdate({ target: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement }, alias?: string): void
 ```
-<br/>
+<br/><br/>
 
 ### formRegistry types
 
 ```js
 formRegistry({ name: string, label: string, rules: string }): void
 ```
-<br/>
+<br/><br/>
 
 ### formSubmit types
 
@@ -483,14 +483,14 @@ All properties that is supported by instance FormEvent.<br/>
 |.param()       | string        | It will return the form data in url encode string.|
 |.formData()    | FormData      | it will return instance of FormData.|
 |.forEach(/*callback*/)| void      | it will loop each of the form data.|
-<br/>
+<br/><br/>
 
 ## useFormState Parameter
 
 ```js
 useFormState<any>(): any 
 ```
-<br/>
+<br/><br/>
 
 ## FormStateProvider Properties
 All properties that is supported by Select Component.<br/>
@@ -501,6 +501,7 @@ The datatypes with "*" means it is required.
 | value       | object        |   &nbsp; | the value you want to provide in children by using `useFormState`| 
 | children    | ReactNode     |      &nbsp; | the form | 
 
+<br/><br/>
 
 ## License
 MIT Licensed. Copyright (c) Mytabworks 2020.

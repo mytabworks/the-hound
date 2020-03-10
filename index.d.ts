@@ -44,6 +44,6 @@ export interface UseFormProps {
     [name: string]: UseFormRegistredProps;
 }
 
-export type UseFormType = (fields?: UseFormProps) => [FormState, FormUpdate, FormRegistry, FormSubmit]
+export type UseFormType = (fields?: UseFormProps) => {FormState, FormUpdate, FormRegistry, FormSubmit}
 
 export const useForm: UseFormType

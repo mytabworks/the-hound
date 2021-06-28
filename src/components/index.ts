@@ -1,4 +1,5 @@
-export { default as FormProvider, FormProviderProps } from './FormProvider';
+export { default as FormProvider } from './FormProvider';
+export * from './FormProvider'
 export { FormEvent } from './FormEvent';
 export * from './FormHooks';
 export { default as Validozer } from 'validozer'; 

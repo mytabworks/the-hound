@@ -1,10 +1,12 @@
 /// <reference types="react" />
+import { FormEvent } from './FormEvent';
 export declare type FieldState = {
     value: any;
     isInvalid: boolean;
     isValidated: boolean;
     failedIn: string;
     message?: string | null;
+    defaultValue?: any;
     [other: string]: any;
 };
 export declare type FieldStateNested = Record<string, FieldState>;
@@ -20,6 +22,7 @@ export declare type FormSchema = {
     label?: string;
     rules?: string;
     value?: any;
+    defaultValue?: any;
 };
 export declare type FormRegistryProps = FormSchema & {
     name: string;
@@ -34,8 +37,8 @@ export declare const FormContext: import("react").Context<{
     dirty: boolean;
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    formSubmit: (onSubmit: (event: any) => void) => (event: any) => void;
-    formRegistry: ({ name, label, rules, value, }: FormRegistryProps) => () => void;
+    formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
+    formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
@@ -43,14 +46,15 @@ export declare const FormContext: import("react").Context<{
     setFieldError: (name: string, message: string) => void;
     clearFieldError: (name: string) => void;
     setDirty: (dirty: boolean) => void;
+    resetForm: () => void;
 }>;
 export declare const useFormField: () => {
     submitted: boolean;
     dirty: boolean;
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    formSubmit: (onSubmit: (event: any) => void) => (event: any) => void;
-    formRegistry: ({ name, label, rules, value, }: FormRegistryProps) => () => void;
+    formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
+    formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
@@ -58,14 +62,15 @@ export declare const useFormField: () => {
     setFieldError: (name: string, message: string) => void;
     clearFieldError: (name: string) => void;
     setDirty: (dirty: boolean) => void;
+    resetForm: () => void;
 };
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
     dirty: boolean;
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    formSubmit: (onSubmit: (event: any) => void) => (event: any) => void;
-    formRegistry: ({ name, label, rules, value, }: FormRegistryProps) => () => void;
+    formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
+    formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
@@ -73,4 +78,5 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     setFieldError: (name: string, message: string) => void;
     clearFieldError: (name: string) => void;
     setDirty: (dirty: boolean) => void;
+    resetForm: () => void;
 };

@@ -17,7 +17,7 @@ export class FormEvent {
 
 	fieldStates!: Record<string, any>;
 
-	reset!: () => void;
+	resetForm!: () => void;
 
 	originalEvent?: React.SyntheticEvent<any>;
 

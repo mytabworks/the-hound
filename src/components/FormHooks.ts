@@ -17,7 +17,8 @@ export type FieldState = {
     isInvalid: boolean;
     isValidated: boolean;
     failedIn: string;
-    message?: string | null;
+	message?: string | null;
+	defaultValue?: any;
     [other: string]: any; 
 }
 
@@ -30,7 +31,8 @@ export type FormUpdateProp = {
 export type FormSchema = {
     label?: string;
     rules?: string;
-    value?: any;
+	value?: any;
+	defaultValue?: any;
 }
 
 export type FormRegistryProps = FormSchema & {
@@ -154,7 +156,16 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		setStates((prev) => ({ ...prev, dirty }))
 	}, []);
 
-	const formSubmit = (onSubmit: ((event: any) => void)) => {
+	const resetForm = useCallback(() => {
+		setStates(prev => ({
+			...prev,
+			submitted: false,
+			dirty: false,
+			fields: resetFields(prev.fields)
+		}));
+	}, [])
+
+	const formSubmit = (onSubmit: ((event: FormEvent) => void)) => {
 		return (event: any) => {
 			event.preventDefault();
 			const target = event.target;  
@@ -166,20 +177,15 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				fields: updatedFieldStates
 			}));
 
-			const reset = () => {
-				setStates(prev => ({
-					...prev,
-					submitted: false,
-					dirty: false,
-					fields: resetFields(prev.fields)
-				}));
+			const resetForm = () => {
+				resetForm();
 				(target && 'document' in window) && target.reset();
 			};
 
 			const formevent = new FormEvent({
 				target, 
 				fieldStates: immutableFields(updatedFieldStates), 
-				reset,
+				resetForm,
 				originalEvent: event,
 				setFieldArray,
 				removeFieldArray,
@@ -196,13 +202,15 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		name,
 		label,
 		rules,
-		value = '',
+		value,
+		defaultValue = ''
 	}: FormRegistryProps) => {
 
 		const field = findOrCreateField({
 			label: label || name,
 			rules,
-			value
+			value: value || defaultValue,
+			defaultValue
 		})
 		
 		setStates((prev) => {
@@ -241,6 +249,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		setFieldValue,
 		setFieldError,
 		clearFieldError,
-		setDirty
+		setDirty,
+		resetForm
 	};
 };

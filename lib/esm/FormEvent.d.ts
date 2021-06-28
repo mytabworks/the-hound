@@ -8,7 +8,7 @@ declare type ClearFieldError = (name: string) => void;
 export declare class FormEvent {
     target: any;
     fieldStates: Record<string, any>;
-    reset: () => void;
+    resetForm: () => void;
     originalEvent?: React.SyntheticEvent<any>;
     setFieldArray: SetFieldArray;
     removeFieldArray: RemoveFieldArray;

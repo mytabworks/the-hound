@@ -121,7 +121,7 @@ export const resetFields = (fields: StatePropType["fields"]) => (
 					isInvalid: false,
 					isValidated: false,
 					message: null,
-					value: '',
+					value: each.defaultValue,
 				}) : (
 					resetFields(each)
 				)
@@ -132,16 +132,18 @@ export const resetFields = (fields: StatePropType["fields"]) => (
 				isInvalid: false,
 				isValidated: false,
 				message: null,
-				value: '',
+				value: fields[name].defaultValue,
 			}
 		}
 		return result;
 	}, {})
 )
 
-const transformFields = (rawFields: FormSchema, label: string) => {
+const transformFields = ({defaultValue = '', ...rawFields}: FormSchema, label: string) => {
+
 	return {
-		value: '',
+		value: defaultValue,
+		defaultValue,
 		label,
 		...rawFields,
 		isInvalid: false,

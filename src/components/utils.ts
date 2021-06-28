@@ -1,4 +1,4 @@
-import { default as Validozer} from 'validozer';
+import Validozer from 'validozer';
 import { FieldState, StatePropType, FieldStateNested, FormSchema } from './FormHooks';
 
 export const validateField = (fields: StatePropType["fields"], target: any, customMessage?: string | null) => {

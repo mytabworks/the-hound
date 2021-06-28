@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from 'react';
 import { FormSchema } from './FormHooks';
 declare type SetFieldArray = (name: string, schema: FormSchema | Record<string, FormSchema>, multiple?: boolean) => void;
 declare type RemoveFieldArray = (name: string, index?: number, except?: boolean) => void;

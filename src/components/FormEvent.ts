@@ -1,3 +1,4 @@
+import React from 'react'
 import { FormSchema } from './FormHooks';
 import { transformFieldsToJSON, computeFieldWhenReady, getClosestScrolled } from './utils'
 

@@ -84,8 +84,9 @@ export const validateField = (fields: StatePropType["fields"], target: any, cust
 	};
 };
 
-export const findOrCreateField = (state: FormSchema = {}):any => ({
-	value: '',
+export const findOrCreateField = ({defaultValue = '', ...state}: FormSchema = {}):any => ({
+	value: defaultValue,
+	defaultValue,
 	isInvalid: false,
 	isValidated: false,
 	message: null,

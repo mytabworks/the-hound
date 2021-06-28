@@ -177,15 +177,13 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				fields: updatedFieldStates
 			}));
 
-			const resetForm = () => {
-				resetForm();
-				(target && 'document' in window) && target.reset();
-			};
-
 			const formevent = new FormEvent({
 				target, 
 				fieldStates: immutableFields(updatedFieldStates), 
-				resetForm,
+				resetForm: () => {
+					resetForm();
+					(target && 'document' in window) && target.reset();
+				},
 				originalEvent: event,
 				setFieldArray,
 				removeFieldArray,
@@ -209,7 +207,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		const field = findOrCreateField({
 			label: label || name,
 			rules,
-			value: value || defaultValue,
+			value: typeof value === 'undefined' ? defaultValue : value,
 			defaultValue
 		})
 		

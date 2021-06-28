@@ -106,7 +106,7 @@ export declare const validateField: (fields: StatePropType["fields"], target: an
     flatMap<U_7, This_1 = undefined>(callback: (this: This_1, value: FieldState, index: number, array: FieldState[]) => U_7 | readonly U_7[], thisArg?: This_1 | undefined): U_7[];
     flat<A_1, D_1 extends number = 1>(this: A_1, depth?: D_1 | undefined): FlatArray<A_1, D_1>[];
 };
-export declare const findOrCreateField: (state?: FormSchema) => any;
+export declare const findOrCreateField: ({ defaultValue, ...state }?: FormSchema) => any;
 export declare const immutableFields: (fields: StatePropType["fields"]) => {};
 export declare const immutableFieldArray: (arrayFields: FieldState[] | FieldStateNested[]) => FieldState[] | FieldStateNested[];
 export declare const resetFields: (fields: StatePropType["fields"]) => {};

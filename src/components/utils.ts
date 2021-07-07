@@ -172,7 +172,7 @@ export const transformDefaultFields = (fields: Record<string, FormSchema | FormS
 
 export const getChainedField = (name: string) => {
 	let index
-	const [field, ...subFields] = name.replace(/\[(\d)\]/, (_, i) => {
+	const [field, ...subFields] = name.replace(/\[(\d+)\]/, (_, i) => {
 		index = parseInt(i)
 		return ""
 	}).split('.')

@@ -82,6 +82,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 			const fieldsData = transformFieldsToJSON(prev.fields)
 			return {
 				...prev,
+				dirty: true,
 				fields: {
 					...prev.fields,
 					[name]: [
@@ -114,6 +115,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				delete prev.fields[name]
 				return {
 					...prev,
+					dirty: true,
 					fields: {
 						...prev.fields
 					}
@@ -121,6 +123,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 			} else {
 				return {
 					...prev,
+					dirty: true,
 					fields: {
 						...prev.fields,
 						[name]: prev.fields[name].filter((_: any, i: number) => except ? i === index : i !== index)

@@ -114,7 +114,6 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				delete prev.fields[name]
 				return {
 					...prev,
-					dirty: true,
 					fields: {
 						...prev.fields
 					}

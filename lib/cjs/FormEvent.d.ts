@@ -5,6 +5,7 @@ declare type RemoveFieldArray = (name: string, index?: number, except?: boolean)
 declare type SetFieldValue = (name: string, value: any) => void;
 declare type SetFieldError = (name: string, errorMessage: string) => void;
 declare type ClearFieldError = (name: string) => void;
+declare type SetDirty = (value: boolean) => void;
 export declare class FormEvent {
     target: any;
     fieldStates: Record<string, any>;
@@ -15,6 +16,7 @@ export declare class FormEvent {
     setFieldValue: SetFieldValue;
     setFieldError: SetFieldError;
     clearFieldError: ClearFieldError;
+    setDirty: SetDirty;
     constructor(props: any);
     locateFailed(correction?: number, autoscroll?: boolean): any;
     isReady(): boolean;

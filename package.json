@@ -1,6 +1,6 @@
 {
   "name": "formydable",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Blazingly Fast React Forms.",
   "main": "./cjs",
   "module": "./esm",

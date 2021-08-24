@@ -190,7 +190,8 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				removeFieldArray,
 				setFieldError,
 				setFieldValue,
-				clearFieldError
+				clearFieldError,
+				setDirty
 			});
 
 			typeof onSubmit === 'function' && onSubmit(formevent);

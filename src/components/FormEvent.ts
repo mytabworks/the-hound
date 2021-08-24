@@ -12,6 +12,8 @@ type SetFieldError = (name: string, errorMessage: string) => void;
 
 type ClearFieldError = (name: string) => void;
 
+type SetDirty = (value: boolean) => void;
+
 export class FormEvent {
 
 	target: any;
@@ -30,7 +32,9 @@ export class FormEvent {
 	
 	setFieldError!: SetFieldError;
 	
-    clearFieldError!: ClearFieldError;
+	clearFieldError!: ClearFieldError;
+	
+    setDirty!: SetDirty;
 
 	constructor(props: any) {
 		Object.assign(this, props)

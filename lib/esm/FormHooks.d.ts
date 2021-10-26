@@ -43,8 +43,11 @@ export declare const FormContext: import("react").Context<{
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
     setFieldValue: (name: string, value: any) => void;
+    setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;
+    setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
+    clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 }>;
@@ -59,8 +62,11 @@ export declare const useFormField: () => {
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
     setFieldValue: (name: string, value: any) => void;
+    setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;
+    setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
+    clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 };
@@ -75,8 +81,11 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
     setFieldValue: (name: string, value: any) => void;
+    setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;
+    setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
+    clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 };

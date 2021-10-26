@@ -131,6 +131,22 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		});
 	}, []);
 
+	const setFieldValues = useCallback((fieldValues: Record<string, any>) => {
+		setStates((prev) => {
+
+			const fields = Object.keys(fieldValues).reduce((result, name) => {
+				const value = fieldValues[name]
+				return validateField(result, { name, value })
+			}, prev.fields)
+
+			return {
+				...prev,
+				dirty: true,
+				fields: fields
+			}
+		});
+	}, []);
+
 	const setFieldValue = useCallback((name: string, value: any) => {
 		setStates((prev) => ({
 			...prev,
@@ -139,11 +155,40 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		}));
 	}, []);
 
+	const setFieldErrors = useCallback((fieldErrors: Record<string, string>) => {
+		setStates((prev) => {
+			
+			const fields = Object.keys(fieldErrors).reduce((result, name) => {
+				const message = fieldErrors[name]
+				return validateField(result, { name }, message)
+			}, prev.fields)
+
+			return {
+				...prev,
+				fields: fields
+			}
+		});
+	}, []);
+
 	const setFieldError = useCallback((name: string, message: string) => {
 		setStates((prev) => ({
 			...prev,
 			fields: validateField(prev.fields, { name }, message)
 		}));
+	}, []);
+
+	const clearFieldErrors = useCallback((names: string[]) => {
+		setStates((prev) => {
+			
+			const fields = names.reduce((result, name) => {
+				return validateField(result, { name }, null)
+			}, prev.fields)
+
+			return {
+				...prev,
+				fields: fields
+			}
+		});
 	}, []);
 
 	const clearFieldError = useCallback((name: string) => {
@@ -247,8 +292,11 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		setFieldArray,
 		removeFieldArray,
 		setFieldValue,
+		setFieldValues,
 		setFieldError,
+		setFieldErrors,
 		clearFieldError,
+		clearFieldErrors,
 		setDirty,
 		resetForm
 	};

@@ -281,6 +281,10 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		};
 	}, []);
 
+	const fieldIsRegistered = (name: string) => {
+		return name in fields
+	}
+
 	return {
 		submitted,
 		dirty,
@@ -298,6 +302,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		clearFieldError,
 		clearFieldErrors,
 		setDirty,
-		resetForm
+		resetForm,
+		fieldIsRegistered
 	};
 };

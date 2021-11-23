@@ -50,6 +50,7 @@ export declare const FormContext: import("react").Context<{
     clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
+    fieldIsRegistered: (name: string) => boolean;
 }>;
 export declare const useFormField: () => {
     submitted: boolean;
@@ -69,6 +70,7 @@ export declare const useFormField: () => {
     clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
+    fieldIsRegistered: (name: string) => boolean;
 };
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
@@ -88,4 +90,5 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     clearFieldErrors: (names: string[]) => void;
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
+    fieldIsRegistered: (name: string) => boolean;
 };

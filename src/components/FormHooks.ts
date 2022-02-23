@@ -288,6 +288,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	return {
 		submitted,
 		dirty,
+		fields,
 		formState,
 		formUpdate,
 		formSubmit,

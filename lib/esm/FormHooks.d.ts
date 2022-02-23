@@ -35,6 +35,7 @@ export declare type StatePropType = {
 export declare const FormContext: import("react").Context<{
     submitted: boolean;
     dirty: boolean;
+    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
@@ -55,6 +56,7 @@ export declare const FormContext: import("react").Context<{
 export declare const useFormField: () => {
     submitted: boolean;
     dirty: boolean;
+    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
@@ -75,6 +77,7 @@ export declare const useFormField: () => {
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
     dirty: boolean;
+    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (get?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;

@@ -108,6 +108,39 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		});
 	}, []);
 
+	const setFieldArrays = useCallback((name: string, schemas: FormSchema[] | Record<string, FormSchema>[], chained: boolean = false) => {
+		setStates((prev) => {
+			const fieldsData = transformFieldsToJSON(prev.fields)
+			return {
+				...prev,
+				fields: {
+					...prev.fields,
+					[name]: [
+						...(prev.fields[name] || []), 
+						...((schemas as any).map((schema: any) => {
+							return chained ? (
+								Object.keys(schema).reduce<FieldStateNested>((result, key) => {
+									result[key] = prev.submitted ? (
+										validateAndMutateField(findOrCreateField({label: key, ...schema[key]}), fieldsData)
+									) : (
+										findOrCreateField({label: key, ...schema[key]})
+									)
+									return result
+								}, {})
+							) : (
+								prev.submitted ? (
+									validateAndMutateField(findOrCreateField({label: name, ...schema}), fieldsData)
+								) : (
+									findOrCreateField({label: name, ...schema})
+								)
+							)
+						}))
+					]
+				} as any
+			}
+		});
+	}, []);
+
 	const removeFieldArray = useCallback((name: string, index?: number, except: boolean = false) => {
 		setStates((prev) => {
 			if(isNaN(index as any)) {
@@ -126,6 +159,19 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 						...prev.fields,
 						[name]: prev.fields[name].filter((_: any, i: number) => except ? i === index : i !== index)
 					}
+				}
+			}
+		});
+	}, []);
+
+	const removeFieldArrays = useCallback((name: string, indexes: number[]) => {
+		setStates((prev) => {
+			return {
+				...prev,
+				dirty: true,
+				fields: {
+					...prev.fields,
+					[name]: prev.fields[name].filter((_: any, i: number) => !indexes?.includes(i))
 				}
 			}
 		});
@@ -295,7 +341,9 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		formRegistry,
 		getFieldArray,
 		setFieldArray,
+		setFieldArrays,
 		removeFieldArray,
+		removeFieldArrays,
 		setFieldValue,
 		setFieldValues,
 		setFieldError,

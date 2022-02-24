@@ -82,6 +82,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 			const fieldsData = transformFieldsToJSON(prev.fields)
 			return {
 				...prev,
+				dirty: true,
 				fields: {
 					...prev.fields,
 					[name]: [

@@ -42,7 +42,9 @@ export declare const FormContext: import("react").Context<{
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
+    setFieldArrays: (name: string, schemas: FormSchema[] | Record<string, FormSchema>[], chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
+    removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;
@@ -63,7 +65,9 @@ export declare const useFormField: () => {
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
+    setFieldArrays: (name: string, schemas: FormSchema[] | Record<string, FormSchema>[], chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
+    removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;
@@ -84,7 +88,9 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     setFieldArray: (name: string, schema: FormSchema | Record<string, FormSchema>, chained?: boolean) => void;
+    setFieldArrays: (name: string, schemas: FormSchema[] | Record<string, FormSchema>[], chained?: boolean) => void;
     removeFieldArray: (name: string, index?: number | undefined, except?: boolean) => void;
+    removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
     setFieldError: (name: string, message: string) => void;

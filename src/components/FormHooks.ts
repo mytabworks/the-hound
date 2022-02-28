@@ -171,7 +171,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				dirty: true,
 				fields: {
 					...prev.fields,
-					[name]: prev.fields[name].filter((_: any, i: number) => !indexes?.includes(i))
+					[name]: prev.fields[name].filter((_: any, i: number) => !indexes.includes(i))
 				}
 			}
 		});

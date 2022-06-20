@@ -20,7 +20,7 @@ type SetFieldValues = (fieldValues: Record<string, any>) => void;
 
 type SetFieldErrors = (fieldErrors: Record<string, string>) => void;
 
-type ClearFieldErrors = (name: string) => void;
+type ClearFieldErrors = (names: string[]) => void;
 
 type SetDirty = (value: boolean) => void;
 

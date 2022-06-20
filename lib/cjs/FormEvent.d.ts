@@ -9,7 +9,7 @@ declare type SetFieldArrays = (name: string, schema: FormSchema[] | Record<strin
 declare type RemoveFieldArrays = (name: string, indexes: number[]) => void;
 declare type SetFieldValues = (fieldValues: Record<string, any>) => void;
 declare type SetFieldErrors = (fieldErrors: Record<string, string>) => void;
-declare type ClearFieldErrors = (name: string) => void;
+declare type ClearFieldErrors = (names: string[]) => void;
 declare type SetDirty = (value: boolean) => void;
 export declare class FormEvent {
     target: any;

@@ -12,6 +12,16 @@ type SetFieldError = (name: string, errorMessage: string) => void;
 
 type ClearFieldError = (name: string) => void;
 
+type SetFieldArrays = (name: string, schema: FormSchema[] | Record<string, FormSchema>[], multiple?: boolean) => void;
+
+type RemoveFieldArrays = (name: string, indexes: number[]) => void;
+
+type SetFieldValues = (fieldValues: Record<string, any>) => void;
+
+type SetFieldErrors = (fieldErrors: Record<string, string>) => void;
+
+type ClearFieldErrors = (name: string) => void;
+
 type SetDirty = (value: boolean) => void;
 
 export class FormEvent {
@@ -33,6 +43,16 @@ export class FormEvent {
 	setFieldError!: SetFieldError;
 	
 	clearFieldError!: ClearFieldError;
+
+	setFieldArrays!: SetFieldArrays;
+	
+	removeFieldArrays!: RemoveFieldArrays;
+
+	setFieldValues!: SetFieldValues;
+	
+	setFieldErrors!: SetFieldErrors;
+	
+	clearFieldErrors!: ClearFieldErrors;
 	
     setDirty!: SetDirty;
 

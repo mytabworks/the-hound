@@ -274,7 +274,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				fieldStates: immutableFields(updatedFieldStates), 
 				resetForm: () => {
 					resetForm();
-					(target && 'document' in window) && target.reset();
+					if((target && 'document' in window) && target.reset) target.reset();
 				},
 				originalEvent: event,
 				setFieldArray,
@@ -282,6 +282,11 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 				setFieldError,
 				setFieldValue,
 				clearFieldError,
+				setFieldArrays,
+				removeFieldArrays,
+				setFieldErrors,
+				setFieldValues,
+				clearFieldErrors,
 				setDirty
 			});
 

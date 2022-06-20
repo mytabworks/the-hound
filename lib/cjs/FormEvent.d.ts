@@ -5,6 +5,11 @@ declare type RemoveFieldArray = (name: string, index?: number, except?: boolean)
 declare type SetFieldValue = (name: string, value: any) => void;
 declare type SetFieldError = (name: string, errorMessage: string) => void;
 declare type ClearFieldError = (name: string) => void;
+declare type SetFieldArrays = (name: string, schema: FormSchema[] | Record<string, FormSchema>[], multiple?: boolean) => void;
+declare type RemoveFieldArrays = (name: string, indexes: number[]) => void;
+declare type SetFieldValues = (fieldValues: Record<string, any>) => void;
+declare type SetFieldErrors = (fieldErrors: Record<string, string>) => void;
+declare type ClearFieldErrors = (name: string) => void;
 declare type SetDirty = (value: boolean) => void;
 export declare class FormEvent {
     target: any;
@@ -16,6 +21,11 @@ export declare class FormEvent {
     setFieldValue: SetFieldValue;
     setFieldError: SetFieldError;
     clearFieldError: ClearFieldError;
+    setFieldArrays: SetFieldArrays;
+    removeFieldArrays: RemoveFieldArrays;
+    setFieldValues: SetFieldValues;
+    setFieldErrors: SetFieldErrors;
+    clearFieldErrors: ClearFieldErrors;
     setDirty: SetDirty;
     constructor(props: any);
     locateFailed(correction?: number, autoscroll?: boolean): any;

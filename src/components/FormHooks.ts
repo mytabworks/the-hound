@@ -51,6 +51,16 @@ export const useFormField = () => {
 	return useContext(FormContext);
 };
 
+export const useGetValue = <P = any>(name: string): P => {
+	const { fields } = useFormField()
+
+	return useMemo(() => {
+		return Array.isArray(fields[name]) 
+			? name in fields ? transformFieldsToJSON(fields[name]) : [] 
+			: findOrCreateField(fields[name]).value
+	}, [JSON.stringify(fields[name])])
+};
+
 export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	const defaultStates = useMemo<StatePropType>(() => ({
 		submitted: false,
@@ -60,10 +70,13 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	
 	const [{submitted, dirty, fields}, setStates] = useState<StatePropType>(defaultStates);
 
-	const formState = (get?: string): FieldState | FieldStateNested =>
-		typeof get === 'string'
-			? findOrCreateField(fields[get])
+	const formState = useCallback((name?: string): FieldState | FieldStateNested =>
+		typeof name === 'string'
+			? Array.isArray(fields[name]) 
+				? name in fields ? immutableFieldArray(fields[name]) : [] 
+				: findOrCreateField(fields[name])
 			: immutableFields(fields) 
+	, [fields]);
 
 	const formUpdate = useCallback(({ target }: FormUpdateProp) => {
 		setStates((prev) => ({
@@ -73,9 +86,17 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		}));
 	}, []);
 
-	const getFieldArray = (name: string): Array<FieldState> | Array<FieldStateNested> => {
+	const getValue = useCallback(<P = any>(name?: string): P  =>
+		typeof name === 'string'
+			? Array.isArray(fields[name]) 
+				? name in fields ? transformFieldsToJSON(fields[name]) : [] 
+				: findOrCreateField(fields[name]).value
+			: transformFieldsToJSON(fields)
+	, [fields]); 
+
+	const getFieldArray = useCallback((name: string): Array<FieldState> | Array<FieldStateNested> => {
 		return name in fields ? immutableFieldArray(fields[name]) : []
-	}
+	}, [fields]); 
 
 	const setFieldArray = useCallback((name: string, schema: FormSchema | Record<string, FormSchema>, chained: boolean = false) => {
 		setStates((prev) => {
@@ -259,8 +280,8 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 
 	const formSubmit = (onSubmit: ((event: FormEvent) => void)) => {
 		return (event: any) => {
-			event.preventDefault();
-			const target = event.target;  
+			event?.preventDefault();
+			const target = event?.target;  
 			const updatedFieldStates = validateAllFields(fields, transformFieldsToJSON(fields))
 			
 			setStates(prev => ({
@@ -342,6 +363,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		fields,
 		formState,
 		formUpdate,
+		getValue,
 		formSubmit,
 		formRegistry,
 		getFieldArray,

@@ -280,8 +280,9 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 
 	const formSubmit = (onSubmit: ((event: FormEvent) => void)) => {
 		return (event: any) => {
-			event?.preventDefault();
-			const target = event?.target;  
+			if(event && event.preventDefault)
+				event.preventDefault();
+			const target = event && event.target;  
 			const updatedFieldStates = validateAllFields(fields, transformFieldsToJSON(fields))
 			
 			setStates(prev => ({

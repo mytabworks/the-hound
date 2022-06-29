@@ -211,16 +211,22 @@ export const validateAllFields = (fields: StatePropType["fields"], fieldsData: R
 }
 
 export const transformFieldsToJSON = (fields: StatePropType["fields"]) => {
-	return Object.keys(fields).reduce<Record<string, any>>((result, key) => { 
-		if(Array.isArray(fields[key])) {
-			result[key] = fields[key].map((each: FieldState) => {
-				return isFieldState(each) ? each.value : transformFieldsToJSON(each) 
-			})
-		} else {
-			result[key] = fields[key].value
-		}
-		return result
-	}, {})
+	if(Array.isArray(fields)) {
+		return (fields as any).map((each: FieldState) => {
+			return isFieldState(each) ? each.value : transformFieldsToJSON(each) 
+		})
+	} else {
+		return Object.keys(fields).reduce<Record<string, any>>((result, key) => { 
+			if(Array.isArray(fields[key])) {
+				result[key] = fields[key].map((each: FieldState) => {
+					return isFieldState(each) ? each.value : transformFieldsToJSON(each) 
+				})
+			} else {
+				result[key] = fields[key].value
+			}
+			return result
+		}, {})
+	}
 }
 
 export const validateAndMutateField = (currentField: FieldState, fieldsData: ReturnType<typeof transformFieldsToJSON>) => {

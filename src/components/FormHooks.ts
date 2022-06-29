@@ -51,11 +51,11 @@ export const useFormField = () => {
 	return useContext(FormContext);
 };
 
-export const useGetValue = <P = any>(name: string): P => {
+export const useGetValue = <P = any>(name: string, isArray: boolean = false): P => {
 	const { fields } = useFormField()
 
 	return useMemo(() => {
-		return Array.isArray(fields[name]) 
+		return isArray
 			? name in fields ? transformFieldsToJSON(fields[name]) : [] 
 			: findOrCreateField(fields[name]).value
 	}, [JSON.stringify(fields[name])])
@@ -72,9 +72,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 
 	const formState = useCallback((name?: string): FieldState | FieldStateNested =>
 		typeof name === 'string'
-			? Array.isArray(fields[name]) 
-				? name in fields ? immutableFieldArray(fields[name]) : [] 
-				: findOrCreateField(fields[name])
+			? findOrCreateField(fields[name])
 			: immutableFields(fields) 
 	, [fields]);
 
@@ -86,9 +84,9 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		}));
 	}, []);
 
-	const getValue = useCallback(<P = any>(name?: string): P  =>
+	const getValue = useCallback(<P = any>(name?: string, isArray: boolean = false): P  =>
 		typeof name === 'string'
-			? Array.isArray(fields[name]) 
+			? isArray 
 				? name in fields ? transformFieldsToJSON(fields[name]) : [] 
 				: findOrCreateField(fields[name]).value
 			: transformFieldsToJSON(fields)

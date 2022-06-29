@@ -38,7 +38,7 @@ export declare const FormContext: import("react").Context<{
     fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (name?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    getValue: <P = any>(name?: string | undefined) => P;
+    getValue: <P = any>(name?: string | undefined, isArray?: boolean) => P;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
@@ -62,7 +62,7 @@ export declare const useFormField: () => {
     fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (name?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    getValue: <P = any>(name?: string | undefined) => P;
+    getValue: <P = any>(name?: string | undefined, isArray?: boolean) => P;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
@@ -80,14 +80,14 @@ export declare const useFormField: () => {
     resetForm: () => void;
     fieldIsRegistered: (name: string) => boolean;
 };
-export declare const useGetValue: <P = any>(name: string) => P;
+export declare const useGetValue: <P = any>(name: string, isArray?: boolean) => P;
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
     dirty: boolean;
     fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formState: (name?: string | undefined) => FieldState | FieldStateNested;
     formUpdate: ({ target }: FormUpdateProp) => void;
-    getValue: <P = any>(name?: string | undefined) => P;
+    getValue: <P = any>(name?: string | undefined, isArray?: boolean) => P;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;

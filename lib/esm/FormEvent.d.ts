@@ -31,7 +31,7 @@ export declare class FormEvent {
     locateFailed(correction?: number, autoscroll?: boolean): any;
     isReady(): boolean;
     forEach(callback: (...args: any[]) => void): void;
-    json(): Record<string, any>;
+    json(): any;
     paramArray(): {
         name: string;
         value: any;

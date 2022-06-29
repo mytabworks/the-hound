@@ -117,7 +117,7 @@ export declare const getChainedField: (name: string) => {
     subFields: string[];
 };
 export declare const validateAllFields: (fields: StatePropType["fields"], fieldsData: ReturnType<typeof transformFieldsToJSON>) => {};
-export declare const transformFieldsToJSON: (fields: StatePropType["fields"]) => Record<string, any>;
+export declare const transformFieldsToJSON: (fields: StatePropType["fields"]) => any;
 export declare const validateAndMutateField: (currentField: FieldState, fieldsData: ReturnType<typeof transformFieldsToJSON>) => FieldState;
 export declare const computeFieldWhenReady: (fields: StatePropType["fields"]) => boolean;
 export declare const getClosestScrolled: (container: any) => any;

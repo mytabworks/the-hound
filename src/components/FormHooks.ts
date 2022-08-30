@@ -51,11 +51,11 @@ export const useFormField = () => {
 	return useContext(FormContext);
 };
 
-export const useGetValue = <P = any>(name: string, isArray: boolean = false): P => {
+export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false): P => {
 	const { fields } = useFormField()
 
 	return useMemo(() => {
-		return isArray
+		return isFieldArray
 			? name in fields ? transformFieldsToJSON(fields[name]) : [] 
 			: findOrCreateField(fields[name]).value
 	}, [JSON.stringify(fields[name])])
@@ -84,9 +84,9 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		}));
 	}, []);
 
-	const getValue = useCallback(<P = any>(name?: string, isArray: boolean = false): P  =>
+	const getValue = useCallback(<P = any>(name?: string, isFieldArray: boolean = false): P  =>
 		typeof name === 'string'
-			? isArray 
+			? isFieldArray 
 				? name in fields ? transformFieldsToJSON(fields[name]) : [] 
 				: findOrCreateField(fields[name]).value
 			: transformFieldsToJSON(fields)

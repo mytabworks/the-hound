@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormSchema } from './FormHooks';
-import { transformFieldsToJSON, computeFieldWhenReady, getClosestScrolled } from './utils'
+import { transformFieldsToJSON, computeFieldWhenReady, getClosestScrolled, immutableFields } from './utils'
 
 type SetFieldArray = (name: string, schema: FormSchema | Record<string, FormSchema>, multiple?: boolean) => void;
 
@@ -81,6 +81,16 @@ export class FormEvent {
 		return autoscroll
 			? scrollableElement.scrollTo({ top: lowestErrorTop - correction, left: 0, behavior: 'smooth'})
 			: lowestErrorTop - correction;
+	}
+
+	erroredFieldStates() {
+		const fieldStates = immutableFields(this.fieldStates)
+		return Object.keys(fieldStates)
+			.filter((key) => fieldStates[key].isInvalid)
+			.reduce<Record<string, any>>((result, key) => {
+				result[key] = fieldStates[key]
+				return result
+			}, {})
 	}
 
 	isReady() {

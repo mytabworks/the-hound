@@ -29,6 +29,7 @@ export declare class FormEvent {
     setDirty: SetDirty;
     constructor(props: any);
     locateFailed(correction?: number, autoscroll?: boolean): any;
+    erroredFieldStates(): Record<string, any>;
     isReady(): boolean;
     forEach(callback: (...args: any[]) => void): void;
     json(): any;

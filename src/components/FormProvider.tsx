@@ -1,9 +1,9 @@
 import React from 'react';
-import { FormContext, useForm } from './FormHooks';
+import { FormContext, useCreateStore } from './FormHooks';
 
 export type FormProviderProps = {
     children: React.ReactNode;
-    value: ReturnType<typeof useForm>;
+    value: ReturnType<typeof useCreateStore>;
 }
 
 const FormProvider: React.FunctionComponent<FormProviderProps> = ({ value, children }) => {

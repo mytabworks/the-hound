@@ -1,6 +1,6 @@
 {
   "name": "formydable",
-  "version": "1.5.3",
+  "version": "2.0.0-beta",
   "description": "Blazingly Fast React Forms.",
   "main": "./cjs",
   "module": "./esm",
@@ -9,8 +9,6 @@
     "lib"
   ],
   "scripts": {
-    "start": "start-storybook -p 3000",
-    "build-storybook": "build-storybook",
     "build": "node scripts/build.js",
     "build-types": "yarn tsc -d --emitDeclarationOnly --outDir types",
     "release": "rollout"

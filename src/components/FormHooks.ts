@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useCallback, useMemo } from 'react';
+import { useState, useContext, createContext, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import { FormEvent } from './FormEvent';
 import { 
 	transformDefaultFields, 
@@ -45,44 +45,154 @@ export type StatePropType = {
 	fields: FieldStateNested | FieldStateNested[] | FieldState | FieldState[]
 }
 
-export const FormContext = createContext<ReturnType<typeof useForm>>({} as any);
+export const FormContext = createContext<ReturnType<typeof useCreateStore>>(null as any);
 
 export const useFormField = () => {
-	return useContext(FormContext);
+	const store = useContext(FormContext)
+	const formMethods = useFormGenericSetStateMethods(store);
+	const formGenericWatchMethods = useFormGenericWatchStateMethods(store)
+	return {
+		...formMethods,
+		...formGenericWatchMethods
+	}
+};
+
+export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = false) => {
+	const store = useContext(FormContext);
+
+	const stateFromStore = useStore(store, (states) => states.fields[name])
+
+	const fieldState: StatePropType["fields"] = useMemo(() => {
+		return isFieldArray
+			? stateFromStore ? immutableFieldArray(stateFromStore) : [] 
+			: findOrCreateField(stateFromStore)
+	}, [stateFromStore])
+
+	const formMethods = useFormGenericSetStateMethods(store);
+
+	return {
+		...formMethods,
+		fieldState
+	}
 };
 
 export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false): P => {
-	const { fields } = useFormField()
+	const store = useContext(FormContext);
+
+	const state = useStore(store, (states) => states.fields[name])
 
 	return useMemo(() => {
 		return isFieldArray
-			? name in fields ? transformFieldsToJSON(fields[name]) : [] 
-			: findOrCreateField(fields[name]).value
-	}, [JSON.stringify(fields[name])])
+			? state ? transformFieldsToJSON(state) : [] 
+			: findOrCreateField(state).value
+	}, [state])
 };
 
-export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
-	const defaultStates = useMemo<StatePropType>(() => ({
+export const useFormSubmitted = (store?: ReturnType<typeof useCreateStore>) => {
+	const context = useContext(FormContext);
+	return useStore(store || context, (states) => states.submitted)
+}
+
+export const useFormDirty = (store?: ReturnType<typeof useCreateStore>) => {
+	const context = useContext(FormContext);
+	return useStore(store || context, (states) => states.dirty)
+}
+
+export const useFormSetMethods = (store?: ReturnType<typeof useCreateStore>) => {
+	const context = useContext(FormContext);
+	return useFormGenericSetStateMethods(store || context)
+};
+
+export const useFormWatchMethods = (store?: ReturnType<typeof useCreateStore>) => {
+	const context = useContext(FormContext);
+	return useFormGenericWatchStateMethods(store || context)
+};
+
+type CB<P> = (prev: P) => P
+
+export const useVariable = <P = Record<string, any>>(content: P): [() => P, ((callback: P | CB<P>) => P)] => {
+    const variable = useRef({content})
+
+    return useMemo(() => {
+        return [
+            () => variable.current.content, 
+            (callback: P | CB<P>) => {
+                return variable.current.content = typeof callback === 'function' ? (callback as CB<P>)(variable.current.content) : callback
+			}
+        ]
+    }, [variable.current])
+}
+
+export const useCreateStore = (defaultSchema: Record<string, FormSchema> = {}) => {
+	const initialState = useMemo<StatePropType>(() => ({
 		submitted: false,
 		dirty: false,
 		fields: transformDefaultFields(defaultSchema)
 	}), [])
+
+	const [currentState, setSilentState] = useVariable<StatePropType>(initialState);
+
+    const getState = () => currentState();
+
+    const listeners = useRef(new Set<(state: StatePropType) => void>())
+
+    const setState = (fn: CB<StatePropType>) => {
+
+        const newState = setSilentState(fn)
+        
+        listeners.current.forEach((listener) => listener(newState))
+    }
+
+    const subscribe = (listener: (state: StatePropType) => void) => {
+        
+        listeners.current.add(listener)
+
+        return () => {
+			listeners.current.delete(listener)
+		}
+    }
+
+    return {
+        getState, 
+        setState,
+        subscribe
+    }
+}
+
+export const useStore = <P = StatePropType>(store: ReturnType<typeof useCreateStore>, selector: (state: StatePropType) => P = ((state) => state as any)): P => {
+	const [state, setState] = useState(selector(store.getState()))
+
+	useLayoutEffect(() => store.subscribe((currenctStates) => {
+		setState(selector(currenctStates))
+	}), [])
+
+	return state
+}
+
+export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	
-	const [{submitted, dirty, fields}, setStates] = useState<StatePropType>(defaultStates);
+	const store = useCreateStore(defaultSchema)
+
+	const formMethods = useFormGenericSetStateMethods(store)
+
+	const formGenericWatchMethods = useFormGenericWatchStateMethods(store)
+
+	return {
+		store,
+		...formMethods,
+		...formGenericWatchMethods
+	}
+};
+
+export const useFormGenericWatchStateMethods = (store: ReturnType<typeof useCreateStore>) => {
+
+	const {submitted, dirty, fields} = useStore(store)
 
 	const formState = useCallback((name?: string): FieldState | FieldStateNested =>
 		typeof name === 'string'
 			? findOrCreateField(fields[name])
 			: immutableFields(fields) 
 	, [fields]);
-
-	const formUpdate = useCallback(({ target }: FormUpdateProp) => {
-		setStates((prev) => ({
-			...prev,
-			dirty: true,
-			fields: validateField(prev.fields, target)
-		}));
-	}, []);
 
 	const getValue = useCallback(<P = any>(name?: string, isFieldArray: boolean = false): P  =>
 		typeof name === 'string'
@@ -94,10 +204,35 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 
 	const getFieldArray = useCallback((name: string): Array<FieldState> | Array<FieldStateNested> => {
 		return name in fields ? immutableFieldArray(fields[name]) : []
-	}, [fields]); 
+	}, [fields]);
+	
+	const fieldIsRegistered = (name: string) => {
+		return name in fields
+	}
+
+	return {
+		submitted, 
+		dirty,
+		fields,
+		formState,
+		getValue,
+		getFieldArray,
+		fieldIsRegistered
+	}
+}
+
+export const useFormGenericSetStateMethods = (store: ReturnType<typeof useCreateStore>) => {
+
+	const formUpdate = useCallback(({ target }: FormUpdateProp) => {
+		store.setState((prev) => ({
+			...prev,
+			dirty: true,
+			fields: validateField(prev.fields, target)
+		}));
+	}, []);
 
 	const setFieldArray = useCallback((name: string, schema: FormSchema | Record<string, FormSchema>, chained: boolean = false) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			const fieldsData = transformFieldsToJSON(prev.fields)
 			return {
 				...prev,
@@ -128,7 +263,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const setFieldArrays = useCallback((name: string, schemas: FormSchema[] | Record<string, FormSchema>[], chained: boolean = false) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			const fieldsData = transformFieldsToJSON(prev.fields)
 			return {
 				...prev,
@@ -161,7 +296,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const removeFieldArray = useCallback((name: string, index?: number, except: boolean = false) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			if(isNaN(index as any)) {
 				delete prev.fields[name]
 				return {
@@ -184,7 +319,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const removeFieldArrays = useCallback((name: string, indexes: number[]) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			return {
 				...prev,
 				dirty: true,
@@ -197,7 +332,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const setFieldValues = useCallback((fieldValues: Record<string, any>) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 
 			const fields = Object.keys(fieldValues).reduce((result, name) => {
 				const value = fieldValues[name]
@@ -213,7 +348,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const setFieldValue = useCallback((name: string, value: any) => {
-		setStates((prev) => ({
+		store.setState((prev) => ({
 			...prev,
 			dirty: true,
 			fields: validateField(prev.fields, { name, value })
@@ -221,7 +356,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const setFieldErrors = useCallback((fieldErrors: Record<string, string>) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			
 			const fields = Object.keys(fieldErrors).reduce((result, name) => {
 				const message = fieldErrors[name]
@@ -236,14 +371,14 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const setFieldError = useCallback((name: string, message: string) => {
-		setStates((prev) => ({
+		store.setState((prev) => ({
 			...prev,
 			fields: validateField(prev.fields, { name }, message)
 		}));
 	}, []);
 
 	const clearFieldErrors = useCallback((names: string[]) => {
-		setStates((prev) => {
+		store.setState((prev) => {
 			
 			const fields = names.reduce((result, name) => {
 				return validateField(result, { name }, null)
@@ -257,18 +392,18 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 	}, []);
 
 	const clearFieldError = useCallback((name: string) => {
-		setStates((prev) => ({
+		store.setState((prev) => ({
 			...prev,
 			fields: validateField(prev.fields, { name }, null)
 		}));
 	}, []);
 
 	const setDirty = useCallback((dirty: boolean) => {
-		setStates((prev) => ({ ...prev, dirty }))
+		store.setState((prev) => ({ ...prev, dirty }))
 	}, []);
 
 	const resetForm = useCallback(() => {
-		setStates(prev => ({
+		store.setState(prev => ({
 			...prev,
 			submitted: false,
 			dirty: false,
@@ -281,9 +416,9 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 			if(event && event.preventDefault)
 				event.preventDefault();
 			const target = event && event.target;  
-			const updatedFieldStates = validateAllFields(fields, transformFieldsToJSON(fields))
+			const updatedFieldStates = validateAllFields(store.getState().fields, transformFieldsToJSON(store.getState().fields))
 			
-			setStates(prev => ({
+			store.setState(prev => ({
 				...prev,
 				submitted: true,
 				fields: updatedFieldStates
@@ -329,7 +464,7 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 			defaultValue
 		})
 		
-		setStates((prev) => {
+		store.setState((prev) => {
 			const fieldsData = transformFieldsToJSON(prev.fields)
 			return { 
 				...prev, 
@@ -345,27 +480,17 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		});
 
 		return () => {
-			setStates((prev) => {
+			store.setState((prev) => {
 				delete prev.fields[name];
 				return { ...prev, fields: { ...prev.fields } };
 			});
 		};
 	}, []);
-
-	const fieldIsRegistered = (name: string) => {
-		return name in fields
-	}
-
+	
 	return {
-		submitted,
-		dirty,
-		fields,
-		formState,
 		formUpdate,
-		getValue,
 		formSubmit,
 		formRegistry,
-		getFieldArray,
 		setFieldArray,
 		setFieldArrays,
 		removeFieldArray,
@@ -377,7 +502,6 @@ export const useForm = (defaultSchema: Record<string, FormSchema> = {}) => {
 		clearFieldError,
 		clearFieldErrors,
 		setDirty,
-		resetForm,
-		fieldIsRegistered
+		resetForm
 	};
-};
+}

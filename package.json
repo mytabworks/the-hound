@@ -1,6 +1,6 @@
 {
   "name": "formydable",
-  "version": "2.0.0-beta",
+  "version": "2.0.1",
   "description": "Blazingly Fast React Forms.",
   "main": "./cjs",
   "module": "./esm",
@@ -17,20 +17,18 @@
   "license": "ISC",
   "sideEffects": false,
   "keywords": [
-    "react form",
-    "reactjs form",
-    "react-native form",
-    "react form",
-    "reactjs form",
-    "react-native form",
-    "form hooks",
+    "react",
     "hooks",
-    "javascript",
+    "react forms",
+    "fast",
+    "forms",
+    "easy forms",
+    "form manager",
     "typescript"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mytabworks/draggerjs.git"
+    "url": "git+https://github.com/mytabworks/formydable.git"
   },
   "devDependencies": {
     "@4c/rollout": "^2.2.0",

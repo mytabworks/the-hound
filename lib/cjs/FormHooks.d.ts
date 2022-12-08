@@ -131,7 +131,7 @@ export declare const useCreateStore: (defaultSchema?: Record<string, FormSchema>
     setState: (fn: CB<StatePropType>) => void;
     subscribe: (listener: (state: StatePropType) => void) => () => void;
 };
-export declare const useStore: <P = StatePropType>(store: ReturnType<typeof useCreateStore>, selector?: (state: StatePropType) => P) => P;
+export declare const useStore: <P = StatePropType>(store: ReturnType<typeof useCreateStore>, selector?: (state: StatePropType) => P, layoutEffect?: boolean) => P;
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
     dirty: boolean;

@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
+import { useState, useContext, createContext, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { FormEvent } from './FormEvent';
 import { 
 	transformDefaultFields, 
@@ -79,7 +79,7 @@ export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = f
 export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false): P => {
 	const store = useContext(FormContext);
 
-	const state = useStore(store, (states) => states.fields[name])
+	const state = useStore(store, (states) => states.fields[name], true)
 
 	return useMemo(() => {
 		return isFieldArray
@@ -90,12 +90,12 @@ export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false
 
 export const useFormSubmitted = (store?: ReturnType<typeof useCreateStore>) => {
 	const context = useContext(FormContext);
-	return useStore(store || context, (states) => states.submitted)
+	return useStore(store || context, (states) => states.submitted, true)
 }
 
 export const useFormDirty = (store?: ReturnType<typeof useCreateStore>) => {
 	const context = useContext(FormContext);
-	return useStore(store || context, (states) => states.dirty)
+	return useStore(store || context, (states) => states.dirty, true)
 }
 
 export const useFormSetMethods = (store?: ReturnType<typeof useCreateStore>) => {
@@ -159,12 +159,24 @@ export const useCreateStore = (defaultSchema: Record<string, FormSchema> = {}) =
     }
 }
 
-export const useStore = <P = StatePropType>(store: ReturnType<typeof useCreateStore>, selector: (state: StatePropType) => P = ((state) => state as any)): P => {
+export const useStore = <P = StatePropType>(store: ReturnType<typeof useCreateStore>, selector: (state: StatePropType) => P = ((state) => state as any), layoutEffect: boolean = false): P => {
 	const [state, setState] = useState(selector(store.getState()))
-
-	useLayoutEffect(() => store.subscribe((currenctStates) => {
-		setState(selector(currenctStates))
-	}), [])
+	//@ts-ignore
+	useEffect(() => {
+		if(layoutEffect === false) {
+			return store.subscribe((currenctStates) => {
+				setState(selector(currenctStates))
+			})
+		}
+	}, [])
+	//@ts-ignore
+	useLayoutEffect(() => {
+		if(layoutEffect === true) {
+			return store.subscribe((currenctStates) => {
+				setState(selector(currenctStates))
+			})
+		}
+	}, [])
 
 	return state
 }

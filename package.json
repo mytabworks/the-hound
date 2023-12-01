@@ -11,7 +11,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "build-types": "yarn tsc -d --emitDeclarationOnly --outDir types",
-    "release": "rollout"
+    "type-this-manually-upon-publish": "npm publish lib --ignore-scripts"
   },
   "author": "mytabworks",
   "license": "ISC",
@@ -31,7 +31,6 @@
     "url": "git+https://github.com/mytabworks/formydable.git"
   },
   "devDependencies": {
-    "@4c/rollout": "^2.2.0",
     "@babel/cli": "^7.12.13",
     "@babel/core": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.13.0",

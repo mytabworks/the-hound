@@ -58,6 +58,16 @@ const buildEsm = promise("compile esm modules", async () => {
   await copyTypes(esRoot);
 });
 
+const copyREADME = promise("copying README.md", async () => {
+  fs.copyFileSync(path.join(root, "README.md"), path.join(libRoot, "README.md"))
+});
+
+const cleanPackageJSON = promise("striping package.json and moving it to /lib", async () => {
+  const json = fs.readFileSync(path.join(root, "package.json"), "utf8");
+  const { devDependencies, scripts, ...package } = JSON.parse(json)
+  fs.writeFileSync(path.join(libRoot, "package.json"), JSON.stringify(package, null, 2), 'utf8');
+});
+
 const buildStyle = promise(
   "compile web designer plugins",
   () =>
@@ -94,6 +104,8 @@ Promise.resolve(true)
       // buildStyle() 
   ]))
   .then(generatingModuleDeclaration)
+  .then(copyREADME)
+  .then(cleanPackageJSON)
   // .then(buildDirectories) /*remove cherry pick because it is only direct module without folders module*/
   .catch((err) => {
     if (err) console.error(red(err.stack || err.toString()));

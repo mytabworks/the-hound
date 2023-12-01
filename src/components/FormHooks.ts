@@ -57,7 +57,7 @@ export const useFormField = () => {
 	}
 };
 
-export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = false) => {
+export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = false, defaultValue: any = '') => {
 	const store = useContext(FormContext);
 
 	const stateFromStore = useStore(store, (states) => states.fields[name])
@@ -65,7 +65,7 @@ export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = f
 	const fieldState: StatePropType["fields"] = useMemo(() => {
 		return isFieldArray
 			? stateFromStore ? immutableFieldArray(stateFromStore) : [] 
-			: findOrCreateField(stateFromStore)
+			: findOrCreateField(stateFromStore || {defaultValue})
 	}, [stateFromStore])
 
 	const formMethods = useFormGenericSetStateMethods(store);
@@ -87,6 +87,16 @@ export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false
 			: findOrCreateField(state).value
 	}, [state])
 };
+
+export const useGetAllValue = <P = any>(): P => {
+	const store = useContext(FormContext);
+
+	const state = useStore(store, (states) => states.fields, true)
+
+	return useMemo(() => {
+		return transformFieldsToJSON(state)
+	}, [state])
+}
 
 export const useFormSubmitted = (store?: ReturnType<typeof useCreateStore>) => {
 	const context = useContext(FormContext);

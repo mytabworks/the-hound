@@ -61,7 +61,7 @@ export declare const useFormField: () => {
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 };
-export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boolean) => {
+export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boolean, defaultValue?: any) => {
     fieldState: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
     formUpdate: ({ target }: FormUpdateProp) => void;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
@@ -80,6 +80,7 @@ export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boo
     resetForm: () => void;
 };
 export declare const useGetValue: <P = any>(name: string, isFieldArray?: boolean) => P;
+export declare const useGetAllValue: <P = any>() => P;
 export declare const useFormSubmitted: (store?: {
     getState: () => StatePropType;
     setState: (fn: CB<StatePropType>) => void;

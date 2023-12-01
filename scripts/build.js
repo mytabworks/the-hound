@@ -64,7 +64,7 @@ const copyREADME = promise("copying README.md", async () => {
 
 const cleanPackageJSON = promise("striping package.json and moving it to /lib", async () => {
   const json = fs.readFileSync(path.join(root, "package.json"), "utf8");
-  const { devDependencies, scripts, ...package } = JSON.parse(json)
+  const { devDependencies, scripts, files, ...package } = JSON.parse(json)
   fs.writeFileSync(path.join(libRoot, "package.json"), JSON.stringify(package, null, 2), 'utf8');
 });
 

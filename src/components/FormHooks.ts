@@ -42,7 +42,7 @@ export type FormRegistryProps = FormSchema & {
 export type StatePropType = {
 	submitted: boolean;
 	dirty: boolean;
-	fields: FieldStateNested | FieldStateNested[] | FieldState | FieldState[]
+	fields: Record<string, FieldStateNested | FieldStateNested[] | FieldState | FieldState[]>
 }
 
 export const FormContext = createContext<ReturnType<typeof useCreateStore>>(null as any);
@@ -57,16 +57,16 @@ export const useFormField = () => {
 	}
 };
 
-export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = false, defaultValue: any = '') => {
+export const useFormFieldWithSelector = <T extends true | false = false>(name: string, isFieldArray: T = false as T, defaultValue: any = '') => {
 	const store = useContext(FormContext);
 
 	const stateFromStore = useStore(store, (states) => states.fields[name])
 
-	const fieldState: StatePropType["fields"] = useMemo(() => {
+	const fieldState = useMemo(() => {
 		return isFieldArray
-			? stateFromStore ? immutableFieldArray(stateFromStore) : [] 
-			: findOrCreateField(stateFromStore || {defaultValue})
-	}, [stateFromStore])
+			? stateFromStore ? immutableFieldArray(stateFromStore as FieldStateNested[]) : [] 
+			: findOrCreateField((stateFromStore || {defaultValue}) as FieldState)
+	}, [stateFromStore]) as T extends false ? FieldState : FieldStateNested[]
 
 	const formMethods = useFormGenericSetStateMethods(store);
 
@@ -76,19 +76,19 @@ export const useFormFieldWithSelector = (name: string, isFieldArray: boolean = f
 	}
 };
 
-export const useGetValue = <P = any>(name: string, isFieldArray: boolean = false): P => {
+export const useGetValue = <T = any>(name: string, isFieldArray: boolean = false): T => {
 	const store = useContext(FormContext);
 
 	const state = useStore(store, (states) => states.fields[name], true)
 
 	return useMemo(() => {
 		return isFieldArray
-			? state ? transformFieldsToJSON(state) : [] 
-			: findOrCreateField(state).value
+			? state ? transformFieldsToJSON(state as FieldStateNested) : [] 
+			: findOrCreateField(state as FieldState).value
 	}, [state])
 };
 
-export const useGetAllValue = <P = any>(): P => {
+export const useGetAllValue = <T = Record<string, any>>(): T => {
 	const store = useContext(FormContext);
 
 	const state = useStore(store, (states) => states.fields, true)
@@ -210,22 +210,22 @@ export const useFormGenericWatchStateMethods = (store: ReturnType<typeof useCrea
 
 	const {submitted, dirty, fields} = useStore(store)
 
-	const formState = useCallback((name?: string): FieldState | FieldStateNested =>
+	const formState = useCallback(<T extends string | undefined = undefined>(name?: T): T extends string ? FieldState : FieldStateNested =>
 		typeof name === 'string'
-			? findOrCreateField(fields[name])
+			? findOrCreateField(fields[name!] as FieldState)
 			: immutableFields(fields) 
 	, [fields]);
 
-	const getValue = useCallback(<P = any>(name?: string, isFieldArray: boolean = false): P  =>
+	const getValue = useCallback(<T extends true | false = false>(name?: string, isFieldArray: T = false as T): T extends false ? FieldState : FieldStateNested[]  =>
 		typeof name === 'string'
 			? isFieldArray 
-				? name in fields ? transformFieldsToJSON(fields[name]) : [] 
-				: findOrCreateField(fields[name]).value
+				? name in fields ? transformFieldsToJSON(fields[name] as FieldStateNested) : [] 
+				: findOrCreateField(fields[name] as FieldState).value
 			: transformFieldsToJSON(fields)
 	, [fields]); 
 
 	const getFieldArray = useCallback((name: string): Array<FieldState> | Array<FieldStateNested> => {
-		return name in fields ? immutableFieldArray(fields[name]) : []
+		return name in fields ? immutableFieldArray(fields[name] as FieldStateNested[]) : []
 	}, [fields]);
 	
 	const fieldIsRegistered = (name: string) => {
@@ -261,7 +261,7 @@ export const useFormGenericSetStateMethods = (store: ReturnType<typeof useCreate
 				fields: {
 					...prev.fields,
 					[name]: [
-						...(prev.fields[name] || []), 
+						...(prev.fields[name] || []) as FieldStateNested[], 
 						chained ? (
 							Object.keys(schema).reduce<FieldStateNested>((result, key) => {
 								result[key] = prev.submitted ? (
@@ -292,7 +292,7 @@ export const useFormGenericSetStateMethods = (store: ReturnType<typeof useCreate
 				fields: {
 					...prev.fields,
 					[name]: [
-						...(prev.fields[name] || []), 
+						...(prev.fields[name] || []) as FieldStateNested[], 
 						...((schemas as any).map((schema: any) => {
 							return chained ? (
 								Object.keys(schema).reduce<FieldStateNested>((result, key) => {
@@ -373,6 +373,28 @@ export const useFormGenericSetStateMethods = (store: ReturnType<typeof useCreate
 		store.setState((prev) => ({
 			...prev,
 			dirty: true,
+			fields: validateField(prev.fields, { name, value })
+		}));
+	}, []);
+
+	const setSafeFieldValues = useCallback((fieldValues: Record<string, any>) => {
+		store.setState((prev) => {
+
+			const fields = Object.keys(fieldValues).reduce((result, name) => {
+				const value = fieldValues[name]
+				return validateField(result, { name, value })
+			}, prev.fields)
+
+			return {
+				...prev,
+				fields: fields
+			}
+		});
+	}, []);
+
+	const setSafeFieldValue = useCallback((name: string, value: any) => {
+		store.setState((prev) => ({
+			...prev,
 			fields: validateField(prev.fields, { name, value })
 		}));
 	}, []);
@@ -519,6 +541,8 @@ export const useFormGenericSetStateMethods = (store: ReturnType<typeof useCreate
 		removeFieldArrays,
 		setFieldValue,
 		setFieldValues,
+		setSafeFieldValues,
+		setSafeFieldValue,
 		setFieldError,
 		setFieldErrors,
 		clearFieldError,

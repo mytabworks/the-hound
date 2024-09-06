@@ -30,7 +30,7 @@ export declare type FormRegistryProps = FormSchema & {
 export declare type StatePropType = {
     submitted: boolean;
     dirty: boolean;
-    fields: FieldStateNested | FieldStateNested[] | FieldState | FieldState[];
+    fields: Record<string, FieldStateNested | FieldStateNested[] | FieldState | FieldState[]>;
 };
 export declare const FormContext: import("react").Context<{
     getState: () => StatePropType;
@@ -40,9 +40,9 @@ export declare const FormContext: import("react").Context<{
 export declare const useFormField: () => {
     submitted: boolean;
     dirty: boolean;
-    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
-    formState: (name?: string | undefined) => FieldState | FieldStateNested;
-    getValue: <P = any>(name?: string | undefined, isFieldArray?: boolean) => P;
+    fields: Record<string, FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[]>;
+    formState: <T extends string | undefined = undefined>(name?: T | undefined) => T extends string ? FieldState : Record<string, FieldState>;
+    getValue: <T_1 extends boolean = false>(name?: string | undefined, isFieldArray?: T_1) => T_1 extends false ? FieldState : Record<string, FieldState>[];
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     fieldIsRegistered: (name: string) => boolean;
     formUpdate: ({ target }: FormUpdateProp) => void;
@@ -54,6 +54,8 @@ export declare const useFormField: () => {
     removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValue: (name: string, value: any) => void;
     setFieldError: (name: string, message: string) => void;
     setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
@@ -61,8 +63,8 @@ export declare const useFormField: () => {
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 };
-export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boolean, defaultValue?: any) => {
-    fieldState: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
+export declare const useFormFieldWithSelector: <T extends boolean = false>(name: string, isFieldArray?: T, defaultValue?: any) => {
+    fieldState: T extends false ? FieldState : Record<string, FieldState>[];
     formUpdate: ({ target }: FormUpdateProp) => void;
     formSubmit: (onSubmit: (event: FormEvent) => void) => (event: any) => void;
     formRegistry: ({ name, label, rules, value, defaultValue }: FormRegistryProps) => () => void;
@@ -72,6 +74,8 @@ export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boo
     removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValue: (name: string, value: any) => void;
     setFieldError: (name: string, message: string) => void;
     setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
@@ -79,8 +83,8 @@ export declare const useFormFieldWithSelector: (name: string, isFieldArray?: boo
     setDirty: (dirty: boolean) => void;
     resetForm: () => void;
 };
-export declare const useGetValue: <P = any>(name: string, isFieldArray?: boolean) => P;
-export declare const useGetAllValue: <P = any>() => P;
+export declare const useGetValue: <T = any>(name: string, isFieldArray?: boolean) => T;
+export declare const useGetAllValue: <T = Record<string, any>>() => T;
 export declare const useFormSubmitted: (store?: {
     getState: () => StatePropType;
     setState: (fn: CB<StatePropType>) => void;
@@ -105,6 +109,8 @@ export declare const useFormSetMethods: (store?: {
     removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValue: (name: string, value: any) => void;
     setFieldError: (name: string, message: string) => void;
     setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
@@ -119,9 +125,9 @@ export declare const useFormWatchMethods: (store?: {
 } | undefined) => {
     submitted: boolean;
     dirty: boolean;
-    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
-    formState: (name?: string | undefined) => FieldState | FieldStateNested;
-    getValue: <P = any>(name?: string | undefined, isFieldArray?: boolean) => P;
+    fields: Record<string, FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[]>;
+    formState: <T extends string | undefined = undefined>(name?: T | undefined) => T extends string ? FieldState : Record<string, FieldState>;
+    getValue: <T_1 extends boolean = false>(name?: string | undefined, isFieldArray?: T_1) => T_1 extends false ? FieldState : Record<string, FieldState>[];
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     fieldIsRegistered: (name: string) => boolean;
 };
@@ -136,9 +142,9 @@ export declare const useStore: <P = StatePropType>(store: ReturnType<typeof useC
 export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     submitted: boolean;
     dirty: boolean;
-    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
-    formState: (name?: string | undefined) => FieldState | FieldStateNested;
-    getValue: <P = any>(name?: string | undefined, isFieldArray?: boolean) => P;
+    fields: Record<string, FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[]>;
+    formState: <T extends string | undefined = undefined>(name?: T | undefined) => T extends string ? FieldState : Record<string, FieldState>;
+    getValue: <T_1 extends boolean = false>(name?: string | undefined, isFieldArray?: T_1) => T_1 extends false ? FieldState : Record<string, FieldState>[];
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     fieldIsRegistered: (name: string) => boolean;
     formUpdate: ({ target }: FormUpdateProp) => void;
@@ -150,6 +156,8 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
     removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValue: (name: string, value: any) => void;
     setFieldError: (name: string, message: string) => void;
     setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;
@@ -165,9 +173,9 @@ export declare const useForm: (defaultSchema?: Record<string, FormSchema>) => {
 export declare const useFormGenericWatchStateMethods: (store: ReturnType<typeof useCreateStore>) => {
     submitted: boolean;
     dirty: boolean;
-    fields: FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[];
-    formState: (name?: string | undefined) => FieldState | FieldStateNested;
-    getValue: <P = any>(name?: string | undefined, isFieldArray?: boolean) => P;
+    fields: Record<string, FieldState | Record<string, FieldState> | Record<string, FieldState>[] | FieldState[]>;
+    formState: <T extends string | undefined = undefined>(name?: T | undefined) => T extends string ? FieldState : Record<string, FieldState>;
+    getValue: <T_1 extends boolean = false>(name?: string | undefined, isFieldArray?: T_1) => T_1 extends false ? FieldState : Record<string, FieldState>[];
     getFieldArray: (name: string) => Array<FieldState> | Array<FieldStateNested>;
     fieldIsRegistered: (name: string) => boolean;
 };
@@ -181,6 +189,8 @@ export declare const useFormGenericSetStateMethods: (store: ReturnType<typeof us
     removeFieldArrays: (name: string, indexes: number[]) => void;
     setFieldValue: (name: string, value: any) => void;
     setFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValues: (fieldValues: Record<string, any>) => void;
+    setSafeFieldValue: (name: string, value: any) => void;
     setFieldError: (name: string, message: string) => void;
     setFieldErrors: (fieldErrors: Record<string, string>) => void;
     clearFieldError: (name: string) => void;

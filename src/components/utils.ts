@@ -32,9 +32,9 @@ export const validateField = (fields: StatePropType["fields"], target: any, cust
 	if(isChained && fields[chained.field]) {
 		currentField = chained.subFields.reduce((result: FieldState, subField: string) => {
 			return result[subField]
-		}, isArray ? fields[chained.field][chained.index] : fields[chained.field])
+		}, isArray ? fields[chained.field][chained.index!] : fields[chained.field])
 	} else if(isArray && fields[chained.field]) {
-		currentField = fields[chained.field][chained.index]
+		currentField = fields[chained.field][chained.index!]
 	} else {
 		currentField = fields[name]
 	}
@@ -133,7 +133,7 @@ export const resetFields = (fields: StatePropType["fields"]) => (
 				isInvalid: false,
 				isValidated: false,
 				message: null,
-				value: fields[name].defaultValue,
+				value: (fields[name] as FieldState).defaultValue,
 			}
 		}
 		return result;
@@ -204,7 +204,7 @@ export const validateAllFields = (fields: StatePropType["fields"], fieldsData: R
 				return isFieldState(each) ? validateAndMutateField({...each}, fieldsData) : validateAllFields(each, fieldsData) 
 			})
 		} else {
-			result[key] = validateAndMutateField({...fields[key]}, fieldsData)
+			result[key] = validateAndMutateField({...(fields[key] as FieldState)}, fieldsData)
 		}
 		return result
 	}, {})
@@ -222,7 +222,7 @@ export const transformFieldsToJSON = (fields: StatePropType["fields"]) => {
 					return isFieldState(each) ? each.value : transformFieldsToJSON(each) 
 				})
 			} else {
-				result[key] = fields[key].value
+				result[key] = (fields[key] as FieldState).value
 			}
 			return result
 		}, {})
@@ -260,7 +260,7 @@ export const computeFieldWhenReady = (fields: StatePropType["fields"]) => {
 				return isFieldState(each) ? !each.isInvalid : computeFieldWhenReady(each)
 			})
 		) : (
-			!fields[name].isInvalid
+			!(fields[name] as FieldState).isInvalid
 		)
 	});
 }

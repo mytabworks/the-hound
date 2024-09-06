@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormSchema } from './FormHooks';
+import { FieldState, FormSchema } from './FormHooks';
 import { transformFieldsToJSON, computeFieldWhenReady, getClosestScrolled, immutableFields } from './utils'
 
 type SetFieldArray = (name: string, schema: FormSchema | Record<string, FormSchema>, multiple?: boolean) => void;
@@ -84,7 +84,7 @@ export class FormEvent {
 	}
 
 	erroredFieldStates() {
-		const fieldStates = immutableFields(this.fieldStates)
+		const fieldStates = immutableFields(this.fieldStates) as Record<string, FieldState>;
 		return Object.keys(fieldStates)
 			.filter((key) => fieldStates[key].isInvalid)
 			.reduce<Record<string, any>>((result, key) => {
